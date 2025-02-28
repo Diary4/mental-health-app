@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Plus } from 'lucide-react-native';
 import { useState } from 'react';
 import { useTheme } from '@/context/ThemeContext';
@@ -20,9 +20,9 @@ export default function ExploreScreen() {
   ]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={[styles.entriesList, { backgroundColor: colors.background }]}>
-        <View style={[styles.header, { backgroundColor: colors.card }]}>
+        <View style={[styles.header]}>
           <Text style={[styles.title, { color: colors.text }]}>Journal</Text>
           <TouchableOpacity style={[styles.addButton, { backgroundColor: colors.primary }]}>
             <Plus size={24} color="#ffffff" />
@@ -39,7 +39,7 @@ export default function ExploreScreen() {
           </TouchableOpacity>
         ))}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

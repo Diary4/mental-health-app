@@ -17,6 +17,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { ThemeToggle } from '../../components/ThemeToggle';
 
 export default function SignInScreen() {
+  
   const { colors, isDark } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,9 +29,7 @@ export default function SignInScreen() {
   return (
     <ImageBackground
       source={{
-        uri: isDark
-          ? 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986'
-          : 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe',
+        uri: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe'
       }}
       style={styles.backgroundImage}>
       <LinearGradient

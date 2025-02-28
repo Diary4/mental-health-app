@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { Chrome as Home, BookHeart, Calendar, User, MessageSquare } from 'lucide-react-native';
 import { useTheme } from '../../context/ThemeContext';
 
+
 export default function TabLayout() {
   const { colors, isDark } = useTheme();
 

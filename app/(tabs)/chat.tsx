@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import { Send, Bot } from 'lucide-react-native';
 import { useTheme } from '@/context/ThemeContext';
@@ -58,11 +59,12 @@ export default function ChatScreen() {
   };
 
   return (
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={[styles.container, { backgroundColor: colors.background }]}
       keyboardVerticalOffset={80}>
-      <View style={[styles.header, { backgroundColor: colors.card }]}>
+      <View style={[styles.header]}>
         <View style={styles.aiStatus}>
           <Bot size={24} color={colors.primary} />
           <Text style={[styles.aiStatusText, { color: colors.text }]}>AI Assistant</Text>
@@ -105,6 +107,7 @@ export default function ChatScreen() {
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -114,7 +117,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9fafb',
   },
   header: {
-    backgroundColor: '#ffffff',
     paddingTop: 40,
     paddingHorizontal: 20,
     paddingBottom: 15,

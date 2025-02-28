@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Smile, Meh, Frown, Sun } from 'lucide-react-native';
 import { useTheme } from '@/context/ThemeContext';
 export default function MoodScreen() {
 
   const { colors, isDark } = useTheme();
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView>
         <View style={[styles.header]}>
           <Text style={[styles.title, { color: colors.text }]}>Mood Tracker</Text>
@@ -64,7 +64,7 @@ export default function MoodScreen() {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -1,5 +1,5 @@
-import { SafeAreaView,Text, View, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
-import { Heart , Wind, Timer} from "lucide-react-native"
+import { SafeAreaView,Text, View, ScrollView, TouchableOpacity, StyleSheet, ImageBackground } from "react-native";
+import { Heart , Wind, Timer, User} from "lucide-react-native"
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -12,7 +12,15 @@ const { colors, isDark } = useTheme();
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-        <ThemeToggle />
+        <View style={styles.headerTop}>
+          <View style={styles.headerInner}>
+            <TouchableOpacity style={[styles.userIcon, { backgroundColor: colors.input }]}>
+              <User size={24} color={colors.primary} />
+            </TouchableOpacity>
+            <ThemeToggle />
+          </View>
+        </View>
+
         <View style={[styles.header]}>
           <Text style={[styles.greeting, { color: colors.text }]} >Hello there 👋</Text>
           <Text style={[styles.subGreeting, { color: colors.subtext }]}>How are you feeling today?</Text>
@@ -50,7 +58,7 @@ const { colors, isDark } = useTheme();
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Today's Tips</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Today's Tips</Text>
           <View style={[styles.tipCard, { backgroundColor: colors.card }]}>
             <Text style={[styles.tipTitle, { color: colors.text }]}>Practive Mindfulness</Text>
             <Text style={[styles.tipDescription, { color: colors.subtext }]}>Take 5 minutes to focus on your breath and observe your thoughts without judgement</Text>
@@ -69,6 +77,28 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+  },
+  headerInner:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  userIcon:{
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+  },
+  headerTitle:{
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   greeting: {
     fontSize: 28,
