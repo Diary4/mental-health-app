@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'rea
 import { Settings, Bell, Shield, CircleHelp as HelpCircle, LogOut } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@/context/ThemeContext';
+import { supabase } from '@/lib/supabase';
 export default function ProfileScreen() {
   const { colors, isDark } = useTheme();
   const menuItems = [
@@ -12,8 +13,13 @@ export default function ProfileScreen() {
     { icon: LogOut, label: 'Log Out', color: '#ef4444' },
   ];
 
-  const handleLogOut = () => {
-    router.replace('/(auth)/sign-in');
+  const handleLogOut = async () => {
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.error('Error signing out:', error.message)
+    } else {
+      router.replace('/(auth)/sign-in')
+    }
   }
 
   return (
