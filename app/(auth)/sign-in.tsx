@@ -9,22 +9,40 @@ import {
   Platform,
   ScrollView,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { Mail, Lock, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { ThemeToggle } from '../../components/ThemeToggle';
+import { supabase } from '../../lib/supabase';
+//import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+
+
 
 export default function SignInScreen() {
   
   const { colors, isDark } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSignIn = () => {
-    router.replace('/(tabs)');
-  };
+  async function signInWithEmail() {
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
+
+    if (error) {
+      Alert.alert(error.message)
+    } else {
+      router.replace('/(tabs)')
+    }
+    setLoading(false)
+  }
+
 
   return (
     <ImageBackground
@@ -86,7 +104,7 @@ export default function SignInScreen() {
 
               <TouchableOpacity
                 style={[styles.button, { backgroundColor: colors.primary }]}
-                onPress={handleSignIn}>
+                onPress={signInWithEmail}>
                 <Text style={styles.buttonText}>Sign In</Text>
                 <ArrowRight size={20} color="#ffffff" />
               </TouchableOpacity>
