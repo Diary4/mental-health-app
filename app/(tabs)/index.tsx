@@ -1,28 +1,42 @@
-import { SafeAreaView,Text, View, ScrollView, TouchableOpacity, StyleSheet, ImageBackground } from "react-native";
+import { SafeAreaView,Text, View, ScrollView, TouchableOpacity, StyleSheet} from "react-native";
 import { Heart , Wind, Timer, User} from "lucide-react-native"
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/context/ThemeContext";
-
+import { supabase } from "@/lib/supabase";
+import { useState, useEffect } from "react";
+import { Session } from "@supabase/supabase-js";
 
 export default function Index() {
 
   
 const { colors, isDark } = useTheme();
+const [session, setSession] = useState<Session | null>(null)
+
+useEffect(() => {
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setSession(session)
+  })
+
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    setSession(session)
+  })
+
+  return () => {
+    subscription.unsubscribe()
+  }
+  
+}, [])
+
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-        <View style={styles.headerTop}>
-          <View style={styles.headerInner}>
-            <TouchableOpacity style={[styles.userIcon, { backgroundColor: colors.input }]}>
-              <User size={24} color={colors.primary} />
-            </TouchableOpacity>
-            <ThemeToggle />
-          </View>
-        </View>
 
         <View style={[styles.header]}>
-          <Text style={[styles.greeting, { color: colors.text }]} >Hello there 👋</Text>
+          <View style={styles.headerTop}>
+            <Text style={[styles.greeting, { color: colors.text }]} >Hello there 👋</Text>
+            <ThemeToggle />
+          </View>
           <Text style={[styles.subGreeting, { color: colors.subtext }]}>How are you feeling today?</Text>
         </View>
 
@@ -76,7 +90,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7F7F7',
   },
   header: {
-    padding: 20,
+    padding: 10,
   },
   headerTop: {
     flexDirection: 'row',
