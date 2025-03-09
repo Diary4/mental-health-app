@@ -9,12 +9,14 @@ import {
   Platform,
   ScrollView,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { Mail, Lock, User, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/context/ThemeContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { supabase } from '@/lib/supabase';
 
 export default function SignUpScreen() {
   
@@ -22,11 +24,26 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { colors, isDark } = useTheme();
+  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = () => {
-    // TODO: Implement actual registration
-    router.replace('/(tabs)');
-  };
+  async function signUpWithEmail() {
+    setLoading(true)
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    })
+
+    if (error) Alert.alert(error.message)
+    if (!session) Alert.alert('Please check your inbox for email verification!')
+    setLoading(false)
+    setName('')
+    setEmail('')
+    setPassword('')
+    router.replace('/(auth)/sign-in')
+  }
 
   return (
     <ImageBackground
@@ -94,7 +111,7 @@ export default function SignUpScreen() {
                 </Text>
               </View>
 
-              <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary }]} onPress={handleSignUp}>
+              <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary }]} disabled={loading} onPress={() => signUpWithEmail()}>
                 <Text style={styles.buttonText}>Create Account</Text>
                 <ArrowRight size={20} color="#ffffff" />
               </TouchableOpacity>
