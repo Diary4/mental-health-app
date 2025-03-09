@@ -33,9 +33,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="journal"
         options={{
-          title: 'Explore',
+          title: 'Journal',
           tabBarIcon: ({ color, size }) => <BookHeart size={size} color={color} />,
         }}
       />
