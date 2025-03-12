@@ -2,7 +2,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Tex
 import { Plus } from 'lucide-react-native';
 import { useState } from 'react';
 import { useTheme } from '@/context/ThemeContext';
-
+import Animated from 'react-native-reanimated';
+import {FadeIn, FadeOut} from 'react-native-reanimated';
 
 export default function ExploreScreen() {
 
@@ -59,18 +60,18 @@ export default function ExploreScreen() {
           </TouchableOpacity>
         </View>
         {isButtonPressed && (
-          <View style={[styles.popUpMessage, { backgroundColor: colors.card }]}>
+          <Animated.View style={[styles.popUpMessage, { backgroundColor: colors.card }]} entering={FadeIn} exiting={FadeOut}>
             <Text style={[styles.titleText, { color: colors.text }]}>Title:</Text>
             <TextInput
               placeholder="Title"
-              style={styles.titleInput}
+              style={[styles.titleInput, { color: colors.text }]}
               placeholderTextColor={isDark ? colors.text : colors.subtext}
               value={title}
               onChangeText={setTitle}
             />
             <TextInput
               placeholder="Content"
-              style={styles.titleInput}
+              style={[styles.titleInput, { color: colors.text }]}
               placeholderTextColor={isDark ? colors.text : colors.subtext}
               value={content}
               onChangeText={setContent}
@@ -84,7 +85,7 @@ export default function ExploreScreen() {
                 <Text style={{ color: '#fff' }}>Add</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </Animated.View>
         )}
         {entries.map((entry) => (
           <TouchableOpacity key={entry.id} style={[styles.entryCard, { backgroundColor: colors.card }]}>
@@ -132,6 +133,7 @@ const styles = StyleSheet.create({
   },
   entriesList: {
     flex: 1,
+    position: 'relative',
   },
   entryCard: {
     backgroundColor: '#ffffff',
@@ -167,6 +169,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#fff',
     borderRadius: 12,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     gap: 10,
     margin: 20,
     padding: 20,
@@ -175,6 +182,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+    zIndex: 1000,
   },
   titleText:{
     fontSize: 18,
@@ -185,6 +193,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
+    color: '#fff',
+    padding: 10,
   },
   contentInput: {
     borderWidth: 1,
