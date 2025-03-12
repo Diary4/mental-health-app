@@ -94,7 +94,7 @@ export default function ChatScreen() {
 
       <View style={[styles.inputContainer, { backgroundColor: colors.card }]}>
         <TextInput
-          style={[styles.input, { backgroundColor: colors.input }]}
+          style={[styles.input, { backgroundColor: colors.input, color: colors.text }]}
           value={inputText}
           onChangeText={setInputText}
           placeholder="Type your message..."
