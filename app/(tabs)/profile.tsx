@@ -3,6 +3,8 @@ import { Settings, Bell, Shield, CircleHelp as HelpCircle, LogOut } from 'lucide
 import { router } from 'expo-router';
 import { useTheme } from '@/context/ThemeContext';
 import { supabase } from '@/lib/supabase';
+
+
 export default function ProfileScreen() {
   const { colors, isDark } = useTheme();
   const menuItems = [
