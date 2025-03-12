@@ -10,6 +10,7 @@ import {
   ScrollView,
   ImageBackground,
   Alert,
+  ActivityIndicator
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { Mail, Lock, ArrowRight } from 'lucide-react-native';
@@ -17,7 +18,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { supabase } from '../../lib/supabase';
-//import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 
 
@@ -68,6 +68,7 @@ export default function SignInScreen() {
               <Text style={[styles.subtitle, { color: colors.subtext }]}>
                 Sign in to continue your journey to better mental health
               </Text>
+              {loading && <ActivityIndicator size="large" color={colors.primary} />}
             </View>
 
             <View style={[styles.form, { backgroundColor: colors.card }]}>
