@@ -71,7 +71,7 @@ export default function ExploreScreen() {
             />
             <TextInput
               placeholder="Content"
-              style={[styles.titleInput, { color: colors.text }]}
+              style={[styles.titleInput, { color: colors.text , padding: 40}]}
               placeholderTextColor={isDark ? colors.text : colors.subtext}
               value={content}
               onChangeText={setContent}
@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     position: 'absolute',
+    height: 270,
     top: 0,
     left: 0,
     right: 0,
