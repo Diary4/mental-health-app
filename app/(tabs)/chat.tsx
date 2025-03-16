@@ -33,6 +33,7 @@ export default function ChatScreen() {
   ]);
   const [inputText, setInputText] = useState('');
 
+  //Handle send message button for next ai response 
   const handleSend = () => {
     if (!inputText.trim()) return;
 
