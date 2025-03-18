@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import { Send, Bot } from 'lucide-react-native';
 import { useTheme } from '@/context/ThemeContext';
@@ -34,30 +35,46 @@ export default function ChatScreen() {
   const [inputText, setInputText] = useState('');
 
   //Handle send message button for next ai response 
-  const handleSend = () => {
-    if (!inputText.trim()) return;
-
+  const handleSend = async () => {
+  
+    
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: Date.now().toString(), 
       text: inputText,
       isUser: true,
       timestamp: new Date(),
     };
-
     setMessages((prev) => [...prev, userMessage]);
-    setInputText('');
-
-    // Simulate AI response
-    setTimeout(() => {
+    setInputText(''); // Clear the input field
+  
+    try {
+      const response = await fetch('http://127.0.0.1:8000/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          text: inputText 
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      
+      console.log('response data:', data.response);
       const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "I understand how you're feeling. Would you like to talk more about what's on your mind?",
+        id: (Date.now() + 1).toString(), // Use a different ID for the AI message
+        text: data.response,
         isUser: false,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiMessage]);
-    }, 1000);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
+
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
