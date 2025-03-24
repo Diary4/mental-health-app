@@ -19,6 +19,7 @@ type Message = {
   text: string;
   isUser: boolean;
   timestamp: Date;
+  isLoading?: boolean; // Added for loading state
 };
 
 export default function ChatScreen() {
@@ -33,11 +34,12 @@ export default function ChatScreen() {
     },
   ]);
   const [inputText, setInputText] = useState('');
+  const [loading, setLoading] = useState(false); // Tracks if AI is responding
 
-  //Handle send message button for next ai response 
+  // Handle send message button for next AI response 
   const handleSend = async () => {
-  
-    
+    if (!inputText.trim()) return; // Prevent sending empty messages
+
     const userMessage: Message = {
       id: Date.now().toString(), 
       text: inputText,
@@ -46,85 +48,110 @@ export default function ChatScreen() {
     };
     setMessages((prev) => [...prev, userMessage]);
     setInputText(''); // Clear the input field
-  
+
+    // Show AI typing indicator
+    const loadingMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      text: '',
+      isUser: false,
+      timestamp: new Date(),
+      isLoading: true, // Indicate AI is typing
+    };
+    setMessages((prev) => [...prev, loadingMessage]);
+    setLoading(true);
+
     try {
       const response = await fetch('http://127.0.0.1:8000/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          text: inputText 
-        }),
+        body: JSON.stringify({ text: inputText }),
       });
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
       
+      const data = await response.json();
       console.log('response data:', data.response);
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(), // Use a different ID for the AI message
-        text: data.response,
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiMessage]);
+
+      // Replace loading message with AI response
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.isLoading ? { ...msg, text: data.response, isLoading: false } : msg
+        )
+      );
     } catch (error) {
       console.error('Error:', error);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.isLoading ? { ...msg, text: 'Failed to get response.', isLoading: false } : msg
+        )
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={[styles.container, { backgroundColor: colors.background }]}
-      keyboardVerticalOffset={80}>
-      <View style={[styles.header]}>
-        <View style={styles.aiStatus}>
-          <Bot size={24} color={colors.primary} />
-          <Text style={[styles.aiStatusText, { color: colors.text }]}>AI Assistant</Text>
-          <View style={[styles.statusIndicator, { backgroundColor: colors.primary }]} />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={[styles.container, { backgroundColor: colors.background }]}
+        keyboardVerticalOffset={80}>
+        
+        <View style={[styles.header]}>
+          <View style={styles.aiStatus}>
+            <Bot size={24} color={colors.primary} />
+            <Text style={[styles.aiStatusText, { color: colors.text }]}>AI Assistant</Text>
+            <View style={[styles.statusIndicator, { backgroundColor: colors.primary }]} />
+          </View>
         </View>
-      </View>
 
-        <ScrollView style={[styles.messagesContainer, { backgroundColor: colors.background }]} contentContainerStyle={styles.messagesList}>
-        {messages.map((message) => (
-          <View
-            key={message.id}
-            style={[
-              styles.messageWrapper,
-              message.isUser ? styles.userMessageWrapper : styles.aiMessageWrapper,
-            ]}>
-            <View style={[styles.message, message.isUser ? styles.userMessage : styles.aiMessage, { backgroundColor: colors.card }]}>
-              <Text style={[styles.messageText, message.isUser ? styles.userMessageText : styles.aiMessageText, { color: colors.text }]}>
-                {message.text}
+        <ScrollView 
+          style={[styles.messagesContainer, { backgroundColor: colors.background }]} 
+          contentContainerStyle={styles.messagesList}>
+          
+          {messages.map((message) => (
+            <View
+              key={message.id}
+              style={[
+                styles.messageWrapper,
+                message.isUser ? styles.userMessageWrapper : styles.aiMessageWrapper,
+              ]}>
+              <View style={[styles.message, message.isUser ? styles.userMessage : styles.aiMessage, { backgroundColor: colors.card }]}>
+                {message.isLoading ? (
+                  <ActivityIndicator size="small" color={colors.primary} />
+                ) : (
+                  <Text style={[styles.messageText, message.isUser ? styles.userMessageText : styles.aiMessageText, { color: colors.text }]}>
+                    {message.text}
+                  </Text>
+                )}
+              </View>
+              <Text style={[styles.timestamp, { color: colors.subtext }]}>
+                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Text>
             </View>
-            <Text style={[styles.timestamp, { color: colors.subtext }]}>
-              {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </Text>
-          </View>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
 
-      <View style={[styles.inputContainer, { backgroundColor: colors.card }]}>
-        <TextInput
-          style={[styles.input, { backgroundColor: colors.input, color: colors.text }]}
-          value={inputText}
-          onChangeText={setInputText}
-          placeholder="Type your message..."
-          placeholderTextColor={colors.subtext}
-          multiline
-          maxLength={500}
-        />
-        <TouchableOpacity style={[styles.sendButton, { backgroundColor: colors.primary }]} onPress={handleSend}>
-          <Send size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+        <View style={[styles.inputContainer, { backgroundColor: colors.card }]}>
+          <TextInput
+            style={[styles.input, { backgroundColor: colors.input, color: colors.text }]}
+            value={inputText}
+            onChangeText={setInputText}
+            placeholder="Type your message..."
+            placeholderTextColor={colors.subtext}
+            multiline
+            maxLength={500}
+          />
+          <TouchableOpacity style={[styles.sendButton, { backgroundColor: colors.primary }]} onPress={handleSend} disabled={loading}>
+            <Send size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
+
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -177,6 +204,8 @@ const styles = StyleSheet.create({
   message: {
     borderRadius: 20,
     padding: 12,
+    minHeight: 40, // Ensure space for ActivityIndicator
+    justifyContent: 'center',
   },
   userMessage: {
     backgroundColor: '#6366f1',
@@ -230,3 +259,4 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
 });
+
